@@ -284,7 +284,7 @@ int ufs_qcom_ice_req_setup(struct ufs_qcom_host *qcom_host,
 				if (!qcom_host->work_pending) {
 					qcom_host->req_pending = cmd->request;
 
-					if (!schedule_work(
+					if (!queue_work(system_highpri_wq,
 						&qcom_host->ice_cfg_work)) {
 						qcom_host->req_pending = NULL;
 
@@ -404,7 +404,7 @@ int ufs_qcom_ice_cfg_start(struct ufs_qcom_host *qcom_host,
 				if (!qcom_host->work_pending) {
 
 					qcom_host->req_pending = cmd->request;
-					if (!schedule_work(
+					if (!queue_work(system_highpri_wq,
 						&qcom_host->ice_cfg_work)) {
 						qcom_host->req_pending = NULL;
 
