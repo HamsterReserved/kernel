@@ -419,13 +419,15 @@ static ssize_t mm_stat_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	struct zram *zram = dev_to_zram(dev);
-	u64 orig_size, mem_used = 0;
+	u64 orig_size, mem_used = 0, num_compacted = 0;
 	long max_used;
 	ssize_t ret;
 
 	down_read(&zram->init_lock);
-	if (init_done(zram))
+	if (init_done(zram)) {
 		mem_used = zpool_get_total_size(zram->meta->mem_pool);
+		num_compacted = zpool_get_num_compacted(zram->meta->mem_pool);
+	}
 
 	orig_size = atomic64_read(&zram->stats.pages_stored);
 	max_used = atomic_long_read(&zram->stats.max_used_pages);
@@ -438,7 +440,7 @@ static ssize_t mm_stat_show(struct device *dev,
 			zram->limit_pages << PAGE_SHIFT,
 			max_used << PAGE_SHIFT,
 			(u64)atomic64_read(&zram->stats.zero_pages),
-			zpool_get_num_compacted(zram->meta->mem_pool));
+			num_compacted);
 	up_read(&zram->init_lock);
 
 	return ret;
