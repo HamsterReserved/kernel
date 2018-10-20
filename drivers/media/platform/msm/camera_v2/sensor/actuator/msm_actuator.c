@@ -1692,9 +1692,8 @@ static int32_t msm_actuator_set_param(struct msm_actuator_ctrl_t *a_ctrl,
 		set_info->actuator_params.init_setting_size
 		<= MAX_ACTUATOR_INIT_SET) {
 		if (a_ctrl->func_tbl->actuator_init_focus) {
-			init_settings = kmalloc(sizeof(struct reg_settings_t) *
-				(set_info->actuator_params.init_setting_size),
-				GFP_KERNEL);
+			init_settings = vmalloc(sizeof(struct reg_settings_t) *
+				(set_info->actuator_params.init_setting_size));
 			if (init_settings == NULL) {
 				kfree(a_ctrl->i2c_reg_tbl);
 				a_ctrl->i2c_reg_tbl = NULL;
@@ -1714,7 +1713,7 @@ static int32_t msm_actuator_set_param(struct msm_actuator_ctrl_t *a_ctrl,
 			rc = a_ctrl->func_tbl->actuator_init_focus(a_ctrl,
 				set_info->actuator_params.init_setting_size,
 				init_settings);
-			kfree(init_settings);
+			vfree(init_settings);
 			if (rc < 0) {
 				kfree(a_ctrl->i2c_reg_tbl);
 				a_ctrl->i2c_reg_tbl = NULL;
