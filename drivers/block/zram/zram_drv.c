@@ -505,12 +505,14 @@ static struct zram_meta *zram_meta_alloc(char *pool_name, u64 disksize)
 		goto out_error;
 	}
 
-	backend = strlen(backend_param_buf) ? backend_param_buf : "zsmalloc";
+	backend = strlen(backend_param_buf) ? backend_param_buf : "z3fold";
 	meta->mem_pool = zpool_create_pool(backend, pool_name,
 			GFP_NOIO, NULL);
 	if (!meta->mem_pool) {
 		pr_err("Error creating memory pool\n");
 		goto out_error;
+	} else {
+		pr_info("Created memory pool with %s as backend\n", backend);
 	}
 
 	return meta;
